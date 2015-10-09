@@ -2,10 +2,12 @@ require "too_done/version"
 require "too_done/init_db"
 require "too_done/user"
 require "too_done/session"
+require "too_done/list"
+require "too_done/task"
 
 require "thor"
 require "pry"
-
+ 
 module TooDone
   class App < Thor
 
@@ -17,6 +19,18 @@ module TooDone
     def add(task)
       # find or create the right todo list
       # create a new item under that list, with optional date
+      list = List.find_or_create_by(name: options[:list], 
+                                    user_id: current_user.id)
+      #new_task = Task.new
+      if options[:date] == !nil
+          item = Task.new(name: task, 
+                          due_date: Date.parse(options[:date]),
+                          list_id: list.id)
+     
+      else
+          item = Task.new(name: task, due_date: Date.today,
+                          list_id: list.id)
+      end              
     end
 
     desc "edit", "Edit a task from a todo list."
@@ -24,7 +38,7 @@ module TooDone
       :desc => "The todo list whose tasks will be edited."
     def edit
       # find the right todo list
-      # BAIL if it doesn't exist and have tasks
+      # BAIL if it doesn't exist and have tasks    
       # display the tasks and prompt for which one to edit
       # allow the user to change the title, due date
     end
