@@ -21,7 +21,7 @@ module TooDone
       # create a new item under that list, with optional date
       list = List.find_or_create_by(name: options[:list], 
                                     user_id: current_user.id)
-      #new_task = Task.new
+
       if options[:date] == !nil
           item = Task.new(name: task, 
                           due_date: Date.parse(options[:date]),
@@ -41,6 +41,27 @@ module TooDone
       # BAIL if it doesn't exist and have tasks    
       # display the tasks and prompt for which one to edit
       # allow the user to change the title, due date
+      puts "Which list would you like to edit?"
+      list_name = STDIN.gets.chomp
+      if List.exists?(name: list_name)
+      puts "What would you like to change with #{list_name}?"
+      puts "Choose name or due date"
+      else
+      puts "#{list_name} does not exist"
+      end
+    
+      change = STDIN.gets.chomp.downcase
+      if change == "name"
+        puts "What Would you like to change the name to?"
+        new_name = STDIN.gets.chomp.downcase
+        change_name = List.find_by(name: list_name)
+        change_name.update(name: new_name)
+  
+      else
+        puts "ok"
+      end
+    
+
     end
 
     desc "done", "Mark a task as completed."
