@@ -71,7 +71,11 @@ module TooDone
 
     end
 
-
+    #def show_all_tasks
+    #  display = Task.find_by(name: run)
+    #  puts "#{display}"
+    #binding.pry
+    #end
 
     desc "done", "Mark a task as completed."
     option :list, :aliases => :l, :default => "*default*",
@@ -80,10 +84,7 @@ module TooDone
       # find the right todo list
       # BAIL if it doesn't exist and have tasks
       # display the tasks and prompt for which one(s?) to mark done
-      display_tasks = Task.show_all_tasks
-      puts "#{display_tasks}"
-      
-
+      show_all_tasks
       puts "Which task do you want to mark as done"
       task = STDIN.gets.chomp.downcase
       mark_done = Task.find_by(name: task)
@@ -102,6 +103,10 @@ module TooDone
     def show
       # find or create the right todo list
       # show the tasks ordered as requested, default to reverse order (recently entered first)
+       
+       show = Task.all
+       show.each {|t| puts t.name}
+      
     end
 
     desc "delete [LIST OR USER]", "Delete a todo list or a user."
