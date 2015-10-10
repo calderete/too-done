@@ -23,12 +23,12 @@ module TooDone
                                     user_id: current_user.id)
 
       if options[:date] == !nil
-          item = Task.new(name: task, 
+          item = Task.create(name: task, 
                           due_date: Date.parse(options[:date]),
                           list_id: list.id)
      
       else
-          item = Task.new(name: task, due_date: Date.today,
+          item = Task.create(name: task, due_date: Date.today,
                           list_id: list.id)
       end              
     end
@@ -41,28 +41,37 @@ module TooDone
       # BAIL if it doesn't exist and have tasks    
       # display the tasks and prompt for which one to edit
       # allow the user to change the title, due date
-      puts "Which list would you like to edit?"
-      list_name = STDIN.gets.chomp
-      if List.exists?(name: list_name)
-      puts "What would you like to change with #{list_name}?"
-      puts "Choose name or due date"
-      else
-      puts "#{list_name} does not exist"
-      end
-    
-      change = STDIN.gets.chomp.downcase
-      if change == "name"
-        puts "What Would you like to change the name to?"
-        new_name = STDIN.gets.chomp.downcase
-        change_name = List.find_by(name: list_name)
-        change_name.update(name: new_name)
-  
-      else
-        puts "ok"
-      end
-    
+      #find_list = List.find_by(name: task.id)
+      puts "Which task to you wish to edit"
+      task_name = STDIN.gets.chomp
+      show_tasks = Task.where(name: task_name)
+      puts "Which tasks would you like to edit? #{show_tasks}"
+      until Task.exists?(name: task_name)
+        puts "#{task_name} does not exist: please enter a valid name"
+        task_name = STDIN.gets.chomp
+        end
+        puts "What would you like change with #{task_name}"
+        puts "Choose 'name' or 'due date'"
+        choice = STDIN.gets.chomp.downcase
+        if choice == "name"
+          puts "What would you like to rename #{task_name}?"
+          new_name = STDIN.gets.chomp.downcase
+          new_task_name = Task.find_by(name: task_name)
+          new_task_name.update(name: new_name)
+        elsif choice == "due date"
+          puts "What you like to change the due date to"
+          puts "must be in YYYY-MM-DD formate"
+          new_date = STDIN.gets.chomp.to_i
+          new_due_date = Task.find_by(name: task_name)
+          new_due_date.update(due_date: new_date)
+        else
+          puts "That is not a valid date"
+        end
+  #binding.pry
 
     end
+
+
 
     desc "done", "Mark a task as completed."
     option :list, :aliases => :l, :default => "*default*",
@@ -71,6 +80,15 @@ module TooDone
       # find the right todo list
       # BAIL if it doesn't exist and have tasks
       # display the tasks and prompt for which one(s?) to mark done
+      display_tasks = Task.show_all_tasks
+      puts "#{display_tasks}"
+      
+
+      puts "Which task do you want to mark as done"
+      task = STDIN.gets.chomp.downcase
+      mark_done = Task.find_by(name: task)
+      mark_done.update(completed?: true)
+
     end
 
     desc "show", "Show the tasks on a todo list in reverse order."
