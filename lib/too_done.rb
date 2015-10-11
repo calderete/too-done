@@ -84,7 +84,17 @@ module TooDone
       # find the right todo list
       # BAIL if it doesn't exist and have tasks
       # display the tasks and prompt for which one(s?) to mark done
-      show_all_tasks
+      
+      show_list = List.all 
+      show_list.map do |t|
+        puts "Chose the list number that contians the task 
+            you wish to mark as done"
+        puts "List: #{t.name}"
+      end
+      show = Task.all
+      show.map do |t|
+        puts "Task: #{t.name} Complete?: #{t.completed?} list id:#{t.list_id}"
+      end
       puts "Which task do you want to mark as done"
       task = STDIN.gets.chomp.downcase
       mark_done = Task.find_by(name: task)
@@ -105,7 +115,10 @@ module TooDone
       # show the tasks ordered as requested, default to reverse order (recently entered first)
        
        show = Task.all
-       show.each {|t| puts t.name}
+       show.map do |t| 
+        puts "Task: #{t.name}, Due date: #{t.due_date},
+              completed?: #{t.completed?}, List num: #{t.list_id}"
+      end
       
     end
 
