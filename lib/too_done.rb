@@ -68,15 +68,7 @@ module TooDone
           puts "That is not a valid date"
         end
   #binding.pry
-
     end
-
-    #def show_all_tasks
-    #  display = Task.find_by(name: run)
-    #  puts "#{display}"
-    #binding.pry
-    #end
-
     desc "done", "Mark a task as completed."
     option :list, :aliases => :l, :default => "*default*",
       :desc => "The todo list whose tasks will be completed."
@@ -116,9 +108,14 @@ module TooDone
        
        show = Task.all
        show.map do |t| 
-        puts "Task: #{t.name}, Due date: #{t.due_date},
-              completed?: #{t.completed?}, List num: #{t.list_id}"
+        task = t.name
+        due_date = t.due_date
+        completed = t.completed?
+        list_id = t.list_id
+        puts "Name: #{task}, List ID: #{list_id}, "
+        
       end
+      
       
     end
 
@@ -133,6 +130,15 @@ module TooDone
       # find the matching user or list
       # BAIL if the user or list couldn't be found
       # delete them (and any dependents)
+      show = Task.all
+      show.map do |t|
+        task = t.name
+        puts "#{task}"
+      end
+      puts "Which task do you want to delete?"
+      choice = STDIN.gets.chomp.downcase
+      delete = Task.find_by(name: choice)
+      delete.destroy
     end
 
     desc "switch USER", "Switch session to manage USER's todo lists."
